@@ -315,6 +315,34 @@
       });
     });
 
+    describe('findIndex', function() {
+      it("should exist", function() {
+        expect(_.findIndex).to.exist;
+      });
+      it('should return the index of the first element that passes truth test', function() {
+        var numbers = [1, 2, 3, 4];
+        var even = function even(value) {
+          return value % 2 === 0;
+        };
+        expect(_.findIndex(numbers, even)).to.equal(1);
+      });
+      it('should return -1 if no element passes truth test', function() {
+        var numbers = [1, 3, 5, 7];
+        var even = function (value) {
+          return value % 2 === 0;
+        };
+        expect(_.findIndex(numbers, even)).to.equal(-1);
+      });
+      it('should not modify input array', function() {
+        var numbers = [1, 2, 3, 4];
+        var even = function (value) {
+          return value % 2 === 0;
+        };
+        _.findIndex(numbers);
+        expect(_.identity(numbers)).to.eql([1, 2, 3, 4]);
+      }); 
+    });
+
     describe("filter", function() {
       it("should exist", function() {
         expect(_.filter).to.exist;
