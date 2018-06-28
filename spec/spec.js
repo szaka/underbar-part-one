@@ -347,7 +347,6 @@
       it("should exist", function() {
         expect(_.filter).to.exist;
       });
-      //Returns a list of items that match a specified function test
       //Passing in a list of items, and a test funtion, it will test each item and it will return a
       //list of items that passed  the function test.
       //(describe) if given a list and a true test it will return a list of values that pass the test.
