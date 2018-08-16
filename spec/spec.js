@@ -68,6 +68,7 @@
           "Redbull",
           "Calpico"
         ]);
+        expect(_.first([1, 2, 3, 4, 5], 3)).to.deep.equal([1, 2, 3]);
       });
 
       it("Passing an integer as the 2nd Argument returns the first element(s) up to that integer", function() {
@@ -106,6 +107,7 @@
       it("should return the last element in the array", function() {
         expect(_.last([1, 2, 3])).to.equal(3);
         expect(_.last([[1, 2], [3, 4]])).to.eql([3, 4]);
+        expect(_.last(["Kane", "Andrew", "Lindsey", "Sean"])).to.equal("Sean");
       });
       it("should return the last n elements when passed an n parameter", function() {
         expect(_.last([1, 2, 3], 2)).to.eql([2, 3]);
@@ -115,6 +117,7 @@
       });
       it("should return an empty array if given a negative number for second argument", function() {
         expect(_.last([1, 2, 3], -1)).to.be.empty;
+        expect(_.last([1, 2, 3, 4], -3)).to.eql([]); // note the different
       });
       it("should return an empty array if the second argument is 0", function() {
         expect(_.last([1, 2, 3], 0)).to.be.empty;
@@ -132,11 +135,6 @@
     describe("each", function() {
       it("should be a function", function() {
         expect(_.each).to.be.an.instanceOf(Function);
-      });
-
-      it("should not return anything", function() {
-        var returnValue = _.each([], function() {});
-        expect(returnValue).to.not.exist;
       });
 
       it("should not mutate the input array", function() {
@@ -180,6 +178,15 @@
         });
 
         expect(iterations).to.eql(["a", "b", "c"]);
+
+        var animals = { d: "dog", c: "cat", b: "bear", f: "fish" };
+        var count = 0;
+
+        _.each(animals, function(value, key) {
+          count++;
+        });
+
+        expect(count).to.eql(4);
       });
 
       it("should iterate over arrays and provide access to each index", function() {
@@ -248,17 +255,6 @@
 
         expect(iterations).to.eql([["dog", "d", letters], ["elephant", "e", letters], ["flotsam", "f", letters]]);
       });
-
-      it("should not confuse an object with a `length` property for an array", function() {
-        var dresser = { length: 39, width: 79, height: 127 };
-        var iterations = [];
-
-        _.each(dresser, function(value, property, object) {
-          iterations.push([value, property, object]);
-        });
-
-        expect(iterations).to.eql([[39, "length", dresser], [79, "width", dresser], [127, "height", dresser]]);
-      });
     });
 
     describe("indexOf", function() {
@@ -278,6 +274,7 @@
         var arr = [1, 2, 3];
         expect(_.indexOf(arr, "Yo")).to.equal(-1);
         expect(_.indexOf(arr, 8)).to.equal(-1);
+        expect(_.indexOf([1, 2, 3], "bison")).to.equal(-1);
       });
 
       it("should return the first index that the desired value appears if appears multiple times", function() {
@@ -296,46 +293,58 @@
         expect(_.indexOf(arr, 3, 2)).to.equal(3);
       });
 
-      //figure out isSorted
-      //use performnace.now to find run time of indexOf without isSorted
-      //use performance.now to find with isSorted
-      //assign variables for the times
-      //compare those times
-      //compare isSorted time < notSorted time
-      it("should execute faster when passed true for isSorted parameter and array is freaking huge", function() {
-        var bigArr = _.range(10000000);
-        var t0 = performance.now();
-        _.indexOf(bigArr, 4526290);
-        var t1 = performance.now();
-        _.indexOf(bigArr, 4526290, true);
-        var t2 = performance.now();
-        var notSortedTime = t1 - t0;
-        var sortedTime = t2 - t1;
-        expect(sortedTime < notSortedTime).to.be.true;
+      it("should run faster with a sorted array and isSorted set to true", function() {
+        const randomArray = (dataSetSize, minValue, maxValue) => {
+          return new Array(dataSetSize).fill(0).map(n => {
+            return Math.round(Math.random() * (maxValue - minValue) + minValue);
+          });
+        };
+
+        const sortedArray = [...Array(100000).keys()];
+        const sortedSearchTarget = 99999;
+
+        const notSortedArray = randomArray(100000, 1, 100000);
+        const notSortedSearchTarget = notSortedArray[notSortedArray.length - 1];
+
+        const sortedTimeStart = performance.now();
+        _.indexOf(sortedArray, sortedSearchTarget, true);
+        const sortedTimeEnd = performance.now();
+        const sortedTimeToRun = sortedTimeEnd - sortedTimeStart;
+
+        const notSortedTimeStart = performance.now();
+        _.indexOf(notSortedArray, notSortedSearchTarget);
+        const notSortedTimeEnd = performance.now();
+        const notSortedTimeToRun = notSortedTimeEnd - notSortedTimeStart;
+        console.log(`${sortedTimeToRun} < ${notSortedTimeToRun}`);
+        //expect(sortedTimeToRun < notSortedTimeToRun).to.be.true;
       });
     });
 
-    describe('findIndex', function() {
+    describe("findIndex", function() {
       it("should exist", function() {
         expect(_.findIndex).to.exist;
       });
-      it('should return the index of the first element that passes truth test', function() {
+      it("should work with sparse arrays", function() {
+        const getEven = num => num % 2 === 0;
+        expect(_.findIndex([1, undefined, 2, -5], getEven)).to.equal(2);
+      });
+      it("should return the index of the first element that passes truth test", function() {
         var numbers = [1, 2, 3, 4];
         var even = function even(value) {
           return value % 2 === 0;
         };
         expect(_.findIndex(numbers, even)).to.equal(1);
       });
-      it('should return -1 if no element passes truth test', function() {
+      it("should return -1 if no element passes truth test", function() {
         var numbers = [1, 3, 5, 7];
-        var even = function (value) {
+        var even = function(value) {
           return value % 2 === 0;
         };
         expect(_.findIndex(numbers, even)).to.equal(-1);
       });
-      it('should not modify input array', function() {
+      it("should not modify input array", function() {
         var numbers = [1, 2, 3, 4];
-        var even = function (value) {
+        var even = function(value) {
           return value % 2 === 0;
         };
         _.findIndex(numbers);
@@ -359,6 +368,16 @@
             return x % 2 === 0;
           })
         ).to.deep.equal([10, 12, 14]);
+
+        const underFour = word => word.length > 4;
+
+        const largeNumber = word => word.length > 1231;
+
+        const isEven = num => num % 2 === 0;
+
+        expect(_.filter([1, 2, 3, 4, 5, 6], isEven)).to.eql([2, 4, 6]);
+        expect(_.filter({ a: "foo", b: "bar", c: "bazzar" }, underFour)).to.eql(["bazzar"]);
+        expect(_.filter({ a: "foo", b: "bar", c: "bazzar" }, largeNumber)).to.eql([]);
       });
       //(it) should work on boolean expressions
       //ex. [true, false, true, true, true] and function(x) {return true;} -> [true, true, true, true]
@@ -436,6 +455,10 @@
           return num % 2 === 0;
         });
         expect(odds).to.deep.equal([1, 3, 5]);
+
+        let nums = [1, 3, 6, 8, 10, 13];
+        const evens = _.reject(nums, el => el % 2 === 0);
+        expect(evens).to.eql([1, 3, 13]);
       });
       it("returns an empty array when all elements fail a test", function() {
         var nums = [2, 4, 6];
@@ -466,14 +489,33 @@
       //it should return an array with no duplicate values
       it("it should return an array with no duplicate values", function() {
         expect(_.uniq([1, 1, 2, 3, 4, 5, 6, 6, 7])).to.deep.equal([1, 2, 3, 4, 5, 6, 7]);
+        const mixedArr = [2, true, 2, 3, "hack", true];
+        const result = _.uniq(mixedArr);
+        expect(result).to.eql([2, true, 3, "hack"]);
       });
 
       //it should compute much faster if isSorted is set to true
       it("it should not return a sorted list if isSorted is set to false", function() {
-        let sorted = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4];
-        let unSorted = [4, 3, 1, 1, 2, 3, 1, 2, 2, 3];
+        const randomArray = (dataSetSize, minValue, maxValue) => {
+          return new Array(dataSetSize).fill(0).map(n => {
+            return Math.round(Math.random() * (maxValue - minValue) + minValue);
+          });
+        };
 
-        expect(_.uniq(sorted, true)).to.not.deep.equal(_.uniq(unSorted, false));
+        const sortedArray = [...Array(1000).keys()];
+
+        const notSortedArray = randomArray(1000, 1, 1000);
+
+        const sortedTimeStart = performance.now();
+        _.uniq(sortedArray, true);
+        const sortedTimeEnd = performance.now();
+        const sortedTimeToRun = sortedTimeEnd - sortedTimeStart;
+
+        const notSortedTimeStart = performance.now();
+        _.uniq(notSortedArray);
+        const notSortedTimeEnd = performance.now();
+        const notSortedTimeToRun = notSortedTimeEnd - notSortedTimeStart;
+        expect(sortedTimeToRun < notSortedTimeToRun).to.be.true;
       });
 
       //it should give a unique list of items based on our iteratee function
@@ -505,8 +547,12 @@
         return `element: ${letter} | idx: ${index}`;
       };
 
+      const multiplyByThree = number => number * 3; // same idea as above
+
       it("should return new array of transformed values", function() {
         expect(_.map(nums, addOne)).to.deep.equal([2, 3, 4]);
+        var numbers = [1, 2, 3];
+        expect(_.map(numbers, multiplyByThree)).to.eql([3, 6, 9]);
       });
       it("should iterate over every element and it's index in input array", function() {
         expect(_.map(["a", "b"], showsElementIndex)).to.eql(["element: a | idx: 0", "element: b | idx: 1"]);
@@ -542,43 +588,80 @@
       // (describe) If give an array of objects and a non-existent key, should return an array of undefined
       // (it) Given an array of objects(fruits) with key 'vegetables', should return [undefined, undefined, undefined];
 
-      describe("Testing _.pluck Method", function() {
-        const fruits = [{ fruit: "banana" }, { fruit: "orange" }, { fruit: "watermelon" }];
-        const valuesOfFruits = ["banana", "orange", "watermelon"];
+      const fruits = [{ fruit: "banana" }, { fruit: "orange" }, { fruit: "watermelon" }];
+      const valuesOfFruits = ["banana", "orange", "watermelon"];
 
-        const mixedDataTypes = [
-          { dataType: true },
-          { dataType: 1 },
-          { dataType: "String" },
-          { dataType: { insideArrObjKey: "insideArrObjValue" } }
-        ];
-        const valuesOfMixedDataTypes = [true, 1, "String", { insideArrObjKey: "insideArrObjValue" }];
+      const mixedDataTypes = [
+        { dataType: true },
+        { dataType: 1 },
+        { dataType: "String" },
+        { dataType: { insideArrObjKey: "insideArrObjValue" } }
+      ];
 
-        it("should exist", function() {
-          expect(_.pluck).to.exist;
-        });
+      const valuesOfMixedDataTypes = [true, 1, "String", { insideArrObjKey: "insideArrObjValue" }];
 
-        it("Should return an array", function() {
-          expect(_.pluck(fruits)).to.be.an("array");
-        });
+      const cats = [{ name: "Chai", age: 1 }, { name: "Earl Grey", age: 2 }, { name: "Jasmine", age: 3 }];
 
-        it("Should not mutate original argument", function() {
-          _.pluck(fruits, "fruit");
+      it("should exist", function() {
+        expect(_.pluck).to.exist;
+        expect(_.pluck).to.be.an.instanceOf(Function);
+      });
 
-          expect(fruits).to.deep.equal([{ fruit: "banana" }, { fruit: "orange" }, { fruit: "watermelon" }]);
-        });
+      it("Should return an array", function() {
+        expect(_.pluck(fruits)).to.be.an("array");
+      });
 
-        it("If given an array containing objects, return an array of values", function() {
-          expect(_.pluck(fruits, "fruit")).to.deep.equal(valuesOfFruits);
-        });
+      it("Should not mutate original argument", function() {
+        _.pluck(fruits, "fruit");
 
-        it("If given an array with mixed data types, should return values", function() {
-          expect(_.pluck(mixedDataTypes, "dataType")).to.eql(valuesOfMixedDataTypes);
-        });
+        expect(fruits).to.deep.equal([{ fruit: "banana" }, { fruit: "orange" }, { fruit: "watermelon" }]);
+      });
 
-        it("If given an array of objects and a non-existent key, should return an array of undefined", function() {
-          expect(_.pluck(fruits, "vegetable")).to.eql([undefined, undefined, undefined]);
-        });
+      it("If given an array containing objects, return an array of values", function() {
+        expect(_.pluck(cats, "name")).to.eql(["Chai", "Earl Grey", "Jasmine"]);
+        expect(_.pluck(cats, "age")).to.eql([1, 2, 3]);
+        expect(_.pluck(fruits, "fruit")).to.deep.equal(valuesOfFruits);
+      });
+
+      it("If given an array with mixed data types, should return values", function() {
+        expect(_.pluck(mixedDataTypes, "dataType")).to.eql(valuesOfMixedDataTypes);
+      });
+
+      it("If given an array of objects and a non-existent key, should return an array of undefined", function() {
+        expect(_.pluck(fruits, "vegetable")).to.eql([undefined, undefined, undefined]);
+      });
+
+      it("should return an empty array when called with an argument of a type other than array or object", function() {
+        expect(
+          _.pluck(2, function() {
+            /*foo */
+          })
+        ).to.eql([]);
+        expect(
+          _.pluck(NaN, function() {
+            /*foo */
+          })
+        ).to.eql([]);
+        expect(
+          _.pluck(undefined, function() {
+            /*foo */
+          })
+        ).to.eql([]);
+        expect(
+          _.pluck("", function() {
+            /*foo */
+          })
+        ).to.eql([]);
+        expect(
+          _.pluck(true, function() {
+            /*foo */
+          })
+        ).to.eql([]);
+        expect(_.pluck(2, "")).to.eql([]);
+        expect(_.pluck(NaN, "")).to.eql([]);
+        expect(_.pluck(undefined, "")).to.eql([]);
+        expect(_.pluck("", "")).to.eql([]);
+        expect(_.pluck(true, "")).to.eql([]);
       });
     });
 
@@ -598,14 +681,16 @@
       it("should reduce in the correct order", function() {
         let sum = (memo, elem) => memo + elem;
         expect(_.reduce(["First", "Second", "Third"], sum)).to.equal("FirstSecondThird");
+        let ages = [16, 25, 22, 11];
+        expect(_.reduce(ages, function(memo, num) {return memo + num})).to.eql(74);
       });
 
-      it("should work when memo is a primative value", function() {
+      it("should work when the memo is a primative value", function() {
         let multiply = (memo, elem) => memo * elem;
         expect(_.reduce([1, 2, 3], multiply, 0)).to.equal(0);
       });
 
-      it("should work when memo is an object", function() {
+      it("should work when the memo is an object", function() {
         let people = [
           { name: "jeff", age: 25, height: 80 },
           { name: "mike", age: 36, height: 75 },
@@ -616,6 +701,23 @@
           return memo;
         };
         expect(_.reduce(people, getNameAgePairs, {})).to.deep.equal({ jeff: 25, mike: 36, billy: 21 });
+
+        const testScores = [
+          { name: "dom", test1: 90 },
+          { name: "gee", test1: 95 },
+          { name: "alec", test1: 70 },
+          { name: "andrew", test1: 68 }
+        ];
+        const length = testScores.length;
+        const sum = _.reduce(
+          testScores,
+          function(memo, person) {
+            return person.test1 + memo;
+          },
+          0
+        );
+
+        expect(sum / length).to.equal(80.75);
       });
 
       it("should not mutate input array", function() {
