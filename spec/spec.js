@@ -340,13 +340,14 @@
         };
         _.findIndex(numbers);
         expect(_.identity(numbers)).to.eql([1, 2, 3, 4]);
-      }); 
+      });
     });
 
     describe("filter", function() {
       it("should exist", function() {
         expect(_.filter).to.exist;
       });
+      //Returns a list of items that match a specified function test
       //Passing in a list of items, and a test funtion, it will test each item and it will return a
       //list of items that passed  the function test.
       //(describe) if given a list and a true test it will return a list of values that pass the test.
@@ -623,13 +624,6 @@
         _.reduce(money, sum);
         expect(money).to.deep.equal([5, 10, 15, 20]);
       });
-    });
-  });
-
-  describe("Part II - A Journey into the beyond!", function() {
-    it("is scary but you can do it!", function() {
-      let expected = "You Can Do It";
-      expect("You Can Do It").to.equal(expected);
     });
   });
 })();
