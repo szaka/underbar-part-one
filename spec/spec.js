@@ -68,11 +68,11 @@
           "Redbull",
           "Calpico"
         ]);
-        expect(_.first([1, 2, 3, 4, 5], 3)).to.deep.equal([1, 2, 3]);
       });
 
       it("Passing an integer as the 2nd Argument returns the first element(s) up to that integer", function() {
         expect(_.first(["caccicity", "alovaria", "rosestan"], 2)).to.deep.equal(["caccicity", "alovaria"]);
+        expect(_.first([1, 2, 3, 4, 5], 3)).to.deep.equal([1, 2, 3]);
       });
 
       //Passing an empty array or object will return undefined
