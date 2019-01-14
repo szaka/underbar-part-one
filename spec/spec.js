@@ -1,12 +1,25 @@
 (function() {
   'use strict';
 
+  var FILL_ME_IN = 'Fill this value in';
+
+  var checkForNativeMethods = function(runUnderbarFunction) {
+    it('should not use the native version of any underbar methods in its implementation', function() {
+      // These spies are set up in testSupport.js
+      runUnderbarFunction();
+      expect(Array.prototype.map.called).to.equal(false);
+      expect(Array.prototype.indexOf.called).to.equal(false);
+      expect(Array.prototype.forEach.called).to.equal(false);
+      expect(Array.prototype.filter.called).to.equal(false);
+      expect(Array.prototype.reduce.called).to.equal(false);
+      expect(Array.prototype.every.called).to.equal(false);
+      expect(Array.prototype.some.called).to.equal(false);
+    });
+  };
+
   describe('Part I', function() {
 
     describe('identity', function() {
-      checkForNativeMethods(function() {
-        _.identity(1);
-      });
 
       it('should return whatever value is passed into it', function() {
         var uniqueObject = {};
@@ -18,66 +31,55 @@
     });
 
     describe('first', function() {
-      checkForNativeMethods(function() {
-        _.first([1,2,3]);
-      });
 
       it('should be able to pull out the first element of an array', function() {
-        expect(_.first([1,2,3])).to.equal(1);
+        expect(_.first([1, 2, 3])).to.equal(FILL_ME_IN);
       });
 
       it('should accept an index argument', function() {
-        expect(_.first([1,2,3], 2)).to.eql([1, 2]);
+        expect(_.first([1, 2, 3], 2)).to.eql([1, 2]);
       });
 
       it('should return empty array if zero is passed in as the index', function() {
-        expect(_.first([1,2,3], 0)).to.eql([]);
+        // There is a very important difference between `equal` and `eql`
+        // Can you discover what it is?
+        expect(_.first([1, 2, 3], 0)).to.eql(FILL_ME_IN);
       });
 
       it('should return all the array\'s elements if the index argument is larger than the length of the array', function() {
-        expect(_.first([1,2,3], 5)).to.eql([1, 2, 3]);
+        expect(_.first([1, 2, 3], 5)).to.eql([1, 2, 3]);
       });
     });
 
     describe('last', function() {
-      checkForNativeMethods(function() {
-        _.last([1,2,3]);
-      });
 
       it('should pull the last element from an array', function() {
-        expect(_.last([1,2,3])).to.equal(3);
+        expect(_.last([1, 2, 3])).to.equal(3);
       });
 
       it('should accept an index argument', function() {
-        expect(_.last([1,2,3], 2)).to.eql([2, 3]);
+        expect(_.last([1, 2, 3], 2)).to.eql(FILL_ME_IN);
       });
 
       it('should return empty array if zero is passed in as the index', function() {
-        expect(_.last([1,2,3], 0)).to.eql([]);
+        expect(_.last([1, 2, 3], 0)).to.eql([]);
       });
 
       it('should return all the array\'s elements if the index argument is larger than the length of the array', function() {
-        expect(_.last([1,2,3], 5)).to.eql([1, 2, 3]);
+        expect(_.last([1, 2, 3], 5)).to.eql(FILL_ME_IN);
       });
     });
 
     describe('each', function() {
-      checkForNativeMethods(function() {
-        _.each([1,2,3,4], function(number) {});
-      });
-
-      it('should be a function', function() {
-        expect(_.each).to.be.an.instanceOf(Function);
-      });
 
       it('should not return anything', function() {
-        var returnValue = _.each([], function(){});
+        var returnValue = _.each([], function() {});
         expect(returnValue).to.not.exist;
       });
 
       it('should not mutate the input array', function() {
-        var input = [1,2,3,4,5];
-        var result = _.each(input, function(item) { /* noop */ });
+        var input = [1, 2, 3, 4, 5];
+        var result = _.each(input, _.identity);
 
         /*
          * Mutation of inputs should be avoided without good justification otherwise
@@ -102,10 +104,10 @@
          * that don't mutate their inputs!
          */
 
-        expect(input).to.eql([1,2,3,4,5])
+        expect(input).to.eql([1, 2, 3, 4, 5]);
       });
 
-      it(' should iterate over arrays and provide access to each value', function() {
+      it('should iterate over arrays and provide access to each value', function() {
         var letters = ['a', 'b', 'c'];
         var iterations = [];
 
@@ -113,7 +115,7 @@
           iterations.push(letter);
         });
 
-        expect(iterations).to.eql(['a','b','c']);
+        expect(iterations).to.eql(['a', 'b', 'c']);
       });
 
       it('should iterate over arrays and provide access to each index', function() {
@@ -124,11 +126,7 @@
           iterations.push([letter, index]);
         });
 
-        expect(iterations).to.eql([
-          ['a', 0],
-          ['b', 1],
-          ['c', 2]
-        ]);
+        expect(iterations).to.eql(FILL_ME_IN);
       });
 
       it('should iterate over arrays and provide access to the original collection', function() {
@@ -155,7 +153,7 @@
           iterations.push(letter);
         });
 
-        expect(iterations).to.not.include('Do not iterate over me!');
+        expect(iterations).to.not.include(FILL_ME_IN);
       });
 
       it('should iterate over objects and provide access to each value', function() {
@@ -217,14 +215,11 @@
     });
 
     describe('indexOf', function() {
-      checkForNativeMethods(function() {
-        _.indexOf([10, 20, 30, 40], 40)
-      });
 
       it('should find 40 in the list', function() {
         var numbers = [10, 20, 30, 40, 50];
 
-        expect(_.indexOf(numbers, 40)).to.equal(3);
+        expect(_.indexOf(FILL_ME_IN, 40)).to.equal(3);
       });
 
       it('should be able to compute indexOf even when the native function is undefined', function() {
@@ -234,23 +229,18 @@
       });
 
       it('returns -1 when the target cannot be found not in the list', function() {
-        var numbers = [10, 20, 30, 40, 50];
+        var numbers = FILL_ME_IN;
 
         expect(_.indexOf(numbers, 35)).to.equal(-1);
       });
 
       it('returns the first index that the target can be found at when there are multiple matches', function() {
-        var numbers = [1, 40, 40, 40, 40, 40, 40, 40, 50, 60, 70];
-
-        expect(_.indexOf(numbers, 40)).to.equal(1);
+        var numbers = FILL_ME_IN;
+        expect(FILL_ME_IN).to.equal(1);
       });
     });
 
     describe('filter', function() {
-      checkForNativeMethods(function() {
-        var isEven = function(num) { return num % 2 === 0; };
-        _.filter([1, 2, 3, 4], isEven)
-      });
 
       it('should return all even numbers in an array', function() {
         var isEven = function(num) { return num % 2 === 0; };
@@ -261,7 +251,7 @@
 
       it('should return all odd numbers in an array', function() {
         var isOdd = function(num) { return num % 2 !== 0; };
-        var odds = _.filter([1, 2, 3, 4, 5, 6], isOdd);
+        var odds = FILL_ME_IN;
 
         expect(odds).to.eql([1, 3, 5]);
       });
@@ -276,10 +266,6 @@
     });
 
     describe('reject', function() {
-      checkForNativeMethods(function() {
-        var isEven = function(num) { return num % 2 === 0; };
-        _.reject([1, 2, 3, 4, 5, 6], isEven)
-      });
 
       it('should reject all even numbers', function() {
         var isEven = function(num) { return num % 2 === 0; };
@@ -305,11 +291,6 @@
     });
 
     describe('uniq', function() {
-      /* START SOLUTION */
-      checkForNativeMethods(function() {
-        _.uniq([1, 2, 3, 4]);
-      });
-      /* END SOLUTION */
 
       it('should not mutate the input array', function() {
         var input = [1, 2, 3, 4, 5];
@@ -351,11 +332,7 @@
         var iterator = function(value) { return value === 1; };
         var numbers = [1, 2, 2, 3, 4, 4];
 
-        /* START SOLUTION */
-        expect(_.uniq(numbers, true, iterator)).to.eql([1, 2]);
-        /* ELSE
         expect(_.uniq(FILL_ME_IN)).to.eql([1, 2]);
-        END SOLUTION */
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
@@ -364,25 +341,13 @@
 
         expect(uniqueNumbers).to.not.equal(numbers);
       });
-      
-      it('should maintain same array length', function() {
-        var numbers = [1, 1, 2, 3];
-        var shuffled = _.shuffle(numbers);
-
-        expect(shuffled.length).to.equal(numbers.length);
-      });
     });
 
     describe('map', function() {
-      checkForNativeMethods(function() {
-        _.map([1, 2, 3, 4], function(num) {
-          return num * 2;
-        })
-      });
 
       it('should not mutate the input array', function() {
-        var input = [1,2,3,4,5];
-        var result = _.map(input, function(num) { /* noop */ });
+        var input = [1, 2, 3, 4, 5];
+        var result = _.map(input, _.identity);
 
         /*
          * Mutation of inputs should be avoided without good justification otherwise
@@ -407,15 +372,13 @@
          * that don't mutate their inputs!
          */
 
-        expect(input).to.eql([1,2,3,4,5])
+        expect(input).to.eql([1, 2, 3, 4, 5]);
       });
 
       it('should apply a function to every value in an array', function() {
-        var doubledNumbers = _.map([1, 2, 3], function(num) {
-          return num * 2;
-        });
+        var multiplyByTwo = FILL_ME_IN;
 
-        expect(doubledNumbers).to.eql([2, 4, 6]);
+        expect(_.map([1, 2, 3], multiplyByTwo)).to.eql([2, 4, 6]);
       });
 
       it('should produce a brand new array instead of modifying the input array', function() {
@@ -429,14 +392,6 @@
     });
 
     describe('pluck', function() {
-      checkForNativeMethods(function() {
-        var people = [
-          { name: 'moe', age: 30 },
-          { name: 'curly', age: 50 }
-        ];
-
-        _.pluck(people, 'name');
-      });
 
       it('should return values contained at a user-defined property', function() {
         var people = [
@@ -444,7 +399,7 @@
           { name: 'curly', age: 50 }
         ];
 
-        expect(_.pluck(people, 'name')).to.eql(['moe', 'curly']);
+        expect(_.pluck(people, 'name')).to.FILL_ME_IN(['moe', 'curly']);
       });
 
       it('should not modify the original array', function() {
@@ -455,28 +410,20 @@
 
         _.pluck(people, 'name');
 
-        expect(people).to.eql([{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }]);
+        expect(people).to.FILL_ME_IN([{ name: 'moe', age: 30 }, { name: 'curly', age: 50 }]);
       });
     });
 
     describe('reduce', function() {
-      checkForNativeMethods(function() {
-        var add = function(tally, item) {return tally + item; };
-        _.reduce([1, 2, 3, 4], add)
-      });
-
-      it('should be a function', function() {
-        expect(_.reduce).to.be.an.instanceOf(Function);
-      });
 
       it('should return a value', function() {
-        var result = _.reduce([3,2,1], function(memo, item) {return item;});
+        var result = _.reduce([3, 2, 1], function(memo, item) { return item; });
         expect(result).to.be.defined;
       });
 
       it('should not mutate the input array', function() {
-        var input = [1,2,3,4,5];
-        var result = _.reduce(input, function(memo, item) {return item;});
+        var input = [1, 2, 3, 4, 5];
+        var result = _.reduce(input, function(memo, item) { return item; });
         
         /*
          * Mutation of inputs should be avoided without good justification otherwise
@@ -501,7 +448,7 @@
          * that don't mutate their inputs!
          */
 
-        expect(input).to.eql([1,2,3,4,5])
+        expect(input).to.eql([1, 2, 3, 4, 5]);
       });
 
       it('should invoke the iterator function with arguments (memo, item) in that order', function() {
@@ -519,12 +466,14 @@
       it('should pass items of the array into the iterator from left to right', function() {
         var orderTraversed = [];
 
-        _.reduce([1,2,3,4], function(memo, item) {
-          orderTraversed.push(item);
+        _.reduce([1, 2, 3, 4], function(memo, item) {
+          // FILL_ME_IN
+          // Add a line here that makes this test pass
+          // for a working implementation of reduce
           return memo;
         }, 10);
 
-        expect(orderTraversed).to.eql([1,2,3,4]);
+        expect(orderTraversed).to.eql([1, 2, 3, 4]);
       });
 
       it('should continue to call iterator even if the iterator returns undefined', function() {
@@ -538,21 +487,20 @@
           }
         };
 
-        var total = _.reduce([1,1,2], returnFalsy);
+        var total = _.reduce([1, 1, 2], returnFalsy);
         expect(total).to.equal(3);
       });
 
       it('should pass every item of the array into the iterator if a memo is passed in', function() {
-        var result = _.reduce([1,2,3], function(memo, item) {
+        var result = _.reduce([1, 2, 3], function(memo, item) {
           return memo - item;
         }, 10);
 
         expect(result).to.equal(4);
       });
 
-      it('should accept falsy values as a valid memo', function() {
-        // Be careful how you check if a memo has been passed in
-        var result = _.reduce([1,2,3], function(memo, item) {
+      it('Fill me in with a description of the behavior this test is checking for', function() {
+        var result = _.reduce([1, 2, 3], function(memo, item) {
           return memo * item;
         }, 0);
 
@@ -560,7 +508,7 @@
       });
 
       it('should set memo to be the first item of the array if no memo is passed in', function() {
-        var result = _.reduce([1,2,3], function(memo) {
+        var result = _.reduce([1, 2, 3], function(memo) {
           return memo;
         });
 
@@ -569,7 +517,7 @@
 
 
       it('should pass the second item of the array into the iterator first if a memo is not passed in', function() {
-        var result = _.reduce([3,2,1], function(memo, item) {
+        var result = _.reduce([3, 2, 1], function(memo, item) {
           return memo - item;
         });
 
@@ -579,17 +527,4 @@
     });
   });
 
-  function checkForNativeMethods(runUnderbarFunction) {
-    it('should not use the native version of any underbar methods in its implementation', function() {
-      // These spies are set up in testSupport.js
-      runUnderbarFunction();
-      expect(Array.prototype.map.called).to.equal(false);
-      expect(Array.prototype.indexOf.called).to.equal(false);
-      expect(Array.prototype.forEach.called).to.equal(false);
-      expect(Array.prototype.filter.called).to.equal(false);
-      expect(Array.prototype.reduce.called).to.equal(false);
-      expect(Array.prototype.every.called).to.equal(false);
-      expect(Array.prototype.some.called).to.equal(false);
-    });
-  }
 }());
