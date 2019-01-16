@@ -239,9 +239,25 @@
   // the case where a starting value is not passed, the iterator is not invoked
   // until the second element, with the first element as its second argument.
   //
+ 
+
   _.reduce = function(collection, iterator, accumulator) {
     /* START SOLUTION */
-    
+    //be using a forloop
+    var fakeAcc;
+    if (accumulator === undefined){ //true
+      accumulator = collection[0]; //1
+    }// 
+     //undefined
+    for (var i = 0; i < collection.length; i++){ //[0]
+      fakeAcc = iterator(accumulator, collection[i]) //
+    }
+    return fakeAcc;
+    //iterator is the function that is editing
+    //collection is the array or object
+    //accumulator is also the starting point of the function
+    //should return a single value
+
     /* END SOLUTION */
   };
 
