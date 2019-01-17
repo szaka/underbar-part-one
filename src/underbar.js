@@ -136,11 +136,13 @@
   };
 
   // Produce a duplicate-free version of the array.
-  _.uniq = function(array, isSorted, iterator) {
+ _.uniq = function(array, iterator, isSorted) {
     /* START SOLUTION */
     var iteratorArr = [];
+    var iteratorCheck = [];
+    var whatWeWant = [];
 
-    if (isSorted === undefined || isSorted === false){
+  if (isSorted === undefined || isSorted === false){
     var uniqArr = [];
     var newObj = {};
     for (var i = 0; i < array.length; i++){
@@ -163,10 +165,20 @@
       if (checkValue !== array[i]){
         arrayOfIndexes.push(array[i]);
         checkValue = array[i]; //have array of indexes 
-      } 
+        } 
+      }
     }
-  }
-
+if (iterator !== undefined){
+      for (var i = 0; i < array.length; i++){
+        iteratorCheck.push(iterator(array[i]));
+      }
+    }
+    for (var i = 0; i < iteratorArr.length; i++){
+      if(!iteratorCheck.includes(iteratorArr[i])){
+        whatWeWant.push(array[i]);
+      }
+      return whatWeWant;
+    }
 };
 
 // iteratorArr = [];
@@ -247,12 +259,17 @@
     var fakeAcc;
     if (accumulator === undefined){ //true
       accumulator = collection[0]; //1
-    }// 
+      for (var i = 1; i < collection.length; i++){
+        accumulator = iterator(accumulator, collection[i])
+      }
+      return accumulator;
+    } else {// 
      //undefined
     for (var i = 0; i < collection.length; i++){ //[0]
-      fakeAcc = iterator(accumulator, collection[i]) //
+      accumulator = iterator(accumulator, collection[i]) //
     }
-    return fakeAcc;
+  }
+    return accumulator;
     //iterator is the function that is editing
     //collection is the array or object
     //accumulator is also the starting point of the function
