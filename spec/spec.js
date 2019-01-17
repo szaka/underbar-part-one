@@ -332,7 +332,7 @@
         var iterator = function(value) { return value === 1; };
         var numbers = [1, 2, 2, 3, 4, 4];
 
-        expect(_.uniq(numbers)).to.eql([1, 2]);
+        expect(_.uniq(numbers, iterator)).to.eql([1, 2]);
       });
 
        it('should handle if sorted equals true', function() {
